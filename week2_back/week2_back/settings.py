@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-zvocg5(htbqj@4ez3*kw1fi7vjhj_c5mmep7-4ahvg^k7ow7tf
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['13.124.93.225', 'localhost', '127.0.0.1','0.0.0.0', '10.0.2.2']
 
 
 # Application definition
@@ -49,7 +49,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
 ROOT_URLCONF = 'week2_back.urls'
