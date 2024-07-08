@@ -87,3 +87,30 @@ def get_friends(request, user_id):
         return Response(serializer.data, status=status.HTTP_200_OK)
     except User.DoesNotExist:
         return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+def get_friend_requests(request, user_id):
+    try:
+        user = User.objects.get(login_id=user_id)
+        friend_requests = Friend.objects.filter(to_user=user, are_we_friend=False).select_related('from_user')
+        request_list = [friend.from_user for friend in friend_requests]
+        serializer = UserSerializer(request_list, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
+def accept_friend_request(request):
+    from_user_id = request.data.get('from_user_id')
+    to_user_id = request.data.get('to_user_id')
+
+    try:
+        from_user = User.objects.get(login_id=from_user_id)
+        to_user = User.objects.get(login_id=to_user_id)
+        friend_request = Friend.objects.get(from_user=from_user, to_user=to_user, are_we_friend=False)
+        friend_request.are_we_friend = True
+        friend_request.save()
+        return Response({'status': 'friend request accepted'}, status=status.HTTP_200_OK)
+    except (User.DoesNotExist, Friend.DoesNotExist):
+        return Response({'error': 'Friend request not found'}, status=status.HTTP_404_NOT_FOUND)
