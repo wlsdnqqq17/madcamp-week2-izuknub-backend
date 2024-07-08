@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import save_kakao_user
+from . import views
 
 urlpatterns = [
-    path('save_kakao_user/', save_kakao_user, name='save_kakao_user'),
+    path('save_kakao_user/', views.save_kakao_user, name='save_kakao_user'),
+    path('search_user/', views.search_user, name='search_user'),
 ]
