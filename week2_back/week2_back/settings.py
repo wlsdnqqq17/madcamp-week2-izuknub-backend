@@ -83,7 +83,15 @@ DATABASES = {
         'USER': 'eunyoung',
         'PASSWORD': '0000',
         'HOST': '13.124.112.168',
-        'PORT': '3306'
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'charset': 'utf8mb4',
+            'read_timeout': 60,
+            'write_timeout': 60,
+            'connect_timeout': 60,
+        },
+        'CONN_MAX_AGE': 600,
     }
 }
 
