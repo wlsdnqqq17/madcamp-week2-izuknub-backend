@@ -9,7 +9,6 @@ def save_kakao_user(request):
         data = json.loads(request.body)
         login_id = data.get('login_id')
         nickname = data.get('nickname')
-        daily_goal = data.get('daily_goal', 0)
 
         try:
             user = User.objects.get(login_id=login_id)
@@ -19,8 +18,7 @@ def save_kakao_user(request):
         except User.DoesNotExist:
             User.objects.create(
                 login_id=login_id,
-                nickname=nickname,
-                daily_goal=daily_goal
+                nickname=nickname
             )
             return JsonResponse({'status': 'created'}, status=201)
 
@@ -28,10 +26,8 @@ def save_kakao_user(request):
 
 @csrf_exempt
 def search_user(request):
-    print("search_user view called")  # 디버깅 로그 추가
     if request.method == 'GET':
         login_id = request.GET.get('loginId')
-        print(f"Received loginId: {login_id}")  # 디버깅 로그 추가
         try:
             user = User.objects.get(login_id=login_id)
             return JsonResponse({
@@ -39,9 +35,7 @@ def search_user(request):
                 'message': 'User found',
                 'data': {
                     'login_id': user.login_id,
-                    'nickname': user.nickname,
-                    'daily_goal': user.daily_goal,
-                    'current_potato': user.current_potato,
+                    'nickname': user.nickname
                 }
             }, status=200)
         except User.DoesNotExist:
