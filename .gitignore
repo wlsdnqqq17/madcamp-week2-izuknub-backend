@@ -1,1 +1,7 @@
 /get-pip.py
+/.idea
+/.idea
+/week2_back/test_app/__pycache__
+/week2_back/test_app/migrations/__pycache__
+/week2_back/week2_back/__pycache__
+/.idea
