@@ -6,4 +6,5 @@ urlpatterns = [
     path('search_user/', views.search_user, name='search_user'),
     path('get_items/', views.get_items, name='get_items'),
     path('add_friend/', views.add_friend, name='add_friend'),
+    path('get_friends/<str:user_id>', views.get_friends, name='get_friends'),
 ]

@@ -76,3 +76,14 @@ def add_friend(request):
 
     except User.DoesNotExist:
         return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+def get_friends(request, user_id):
+    try:
+        user = User.objects.get(login_id=user_id)
+        friends = Friend.objects.filter(from_user=user, are_we_friend=True).select_related('to_user')
+        friend_list = [friend.to_user for friend in friends]
+        serializer = UserSerializer(friend_list, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
