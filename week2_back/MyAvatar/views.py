@@ -114,3 +114,42 @@ def accept_friend_request(request):
         return Response({'status': 'friend request accepted'}, status=status.HTTP_200_OK)
     except (User.DoesNotExist, Friend.DoesNotExist):
         return Response({'error': 'Friend request not found'}, status=status.HTTP_404_NOT_FOUND)
+
+@csrf_exempt
+def purchase_item(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        user_id = data.get('user_id')
+        item_id = data.get('item_id')
+
+        try:
+            user = User.objects.get(login_id=user_id)
+            item = Item.objects.get(id=item_id)
+            user_item, created = UserItem.objects.get_or_create(user_id=user, item_id=item)
+            if created:
+                return JsonResponse({'status': 'Item purchased successfully'}, status=201)
+            else:
+                return JsonResponse({'status': 'Item already purchased'}, status=200)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found'}, status=404)
+        except Item.DoesNotExist:
+            return JsonResponse({'error': 'Item not found'}, status=404)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+@csrf_exempt
+def get_user_items(request):
+    if request.method == 'GET':
+        user_id = request.GET.get('user_id')
+        try:
+            user = User.objects.get(login_id=user_id)
+            user_items = UserItem.objects.filter(user_id=user)
+            items = [ui.item_id for ui in user_items]
+            items_data = [{'id': item.id, 'name': item.name, 'category': item.category,
+                           'item_image_url': item.item_image_url, 'price': item.price,
+                           'is_purchased': True} for item in items]
+            return JsonResponse(items_data, safe=False, status=200)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found'}, status=404)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
