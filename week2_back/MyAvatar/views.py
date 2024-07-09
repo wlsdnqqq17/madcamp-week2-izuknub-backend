@@ -182,3 +182,36 @@ def update_user_potato(request):
         except User.DoesNotExist:
             return JsonResponse({'error': 'User not found'}, status=404)
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+@csrf_exempt
+def update_user_avatar_state(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        user_id = data.get('user_id')
+        hat_item_id = data.get('hat_item_id')
+        clothes_item_id = data.get('clothes_item_id')
+        accessory_item_id = data.get('accessory_item_id')
+        background_item_id = data.get('background_item_id')
+
+        try:
+            user = User.objects.get(login_id=user_id)
+            hat_item = Item.objects.get(id=hat_item_id) if hat_item_id else None
+            clothes_item = Item.objects.get(id=clothes_item_id) if clothes_item_id else None
+            accessory_item = Item.objects.get(id=accessory_item_id) if accessory_item_id else None
+            background_item = Item.objects.get(id=background_item_id) if background_item_id else None
+
+            user_avatar_state, created = UserAvatarState.objects.update_or_create(
+                user=user,
+                defaults={
+                    'hat_item': hat_item,
+                    'clothes_item': clothes_item,
+                    'accessory_item': accessory_item,
+                    'background_item': background_item,
+                }
+            )
+            return JsonResponse({'status': 'success', 'created': created}, status=200)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found'}, status=404)
+        except Item.DoesNotExist:
+            return JsonResponse({'error': 'Item not found'}, status=404)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
