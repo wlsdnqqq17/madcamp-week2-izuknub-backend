@@ -47,6 +47,6 @@ class UserAvatarState(models.Model):
     background_item = models.ForeignKey(Item, on_delete=models.SET_NULL, null=True, blank=True, related_name='background_user')
 
     def __str__(self):
-        return f"AvatarState for user {self.user.username}"
+        return f"AvatarState for user {self.user.nickname}"
 
 

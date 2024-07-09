@@ -157,15 +157,29 @@ def get_user_items(request):
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
+
 @csrf_exempt
-def get_user_potato(request):
+def get_user_info(request):
     if request.method == 'GET':
         user_id = request.GET.get('user_id')
         try:
             user = User.objects.get(login_id=user_id)
-            return JsonResponse({'current_potato': user.current_potato}, status=200)
+            avatar_state = UserAvatarState.objects.get(user=user)
+
+            response_data = {
+                'current_potato': user.current_potato,
+                'avatar_state': {
+                    'hat_item_id': avatar_state.hat_item.id if avatar_state.hat_item else None,
+                    'clothes_item_id': avatar_state.clothes_item.id if avatar_state.clothes_item else None,
+                    'accessory_item_id': avatar_state.accessory_item.id if avatar_state.accessory_item else None,
+                    'background_item_id': avatar_state.background_item.id if avatar_state.background_item else None,
+                }
+            }
+            return JsonResponse(response_data, status=200)
         except User.DoesNotExist:
             return JsonResponse({'error': 'User not found'}, status=404)
+        except UserAvatarState.DoesNotExist:
+            return JsonResponse({'error': 'Avatar state not found'}, status=404)
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 @csrf_exempt
