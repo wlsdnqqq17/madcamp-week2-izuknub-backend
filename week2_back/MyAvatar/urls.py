@@ -12,5 +12,6 @@ urlpatterns = [
     path('purchase_item/', views.purchase_item, name='purchase_item'),
     path('user_items/', views.get_user_items, name='get_user_items'),
     path('get_user_potato/', views.get_user_potato, name='get_user_potato'),
-    path('update_user_potato/', views.update_user_potato, name='update_user_potato')
+    path('update_user_potato/', views.update_user_potato, name='update_user_potato'),
+    path('update_user_avatar_state/', views.update_user_avatar_state, name='update_user_avatar_state')
 ]
