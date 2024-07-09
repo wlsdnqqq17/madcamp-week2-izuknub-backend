@@ -11,4 +11,6 @@ urlpatterns = [
     path('accept_friend_request/', views.accept_friend_request, name='accept_friend_request'),
     path('purchase_item/', views.purchase_item, name='purchase_item'),
     path('user_items/', views.get_user_items, name='get_user_items'),
+    path('get_user_potato/', views.get_user_potato, name='get_user_potato'),
+    path('update_user_potato/', views.update_user_potato, name='update_user_potato')
 ]

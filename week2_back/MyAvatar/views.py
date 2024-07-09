@@ -13,16 +13,19 @@ def save_kakao_user(request):
         data = json.loads(request.body)
         login_id = data.get('login_id')
         nickname = data.get('nickname')
+        current_potato = data.get('current_potato')
 
         try:
             user = User.objects.get(login_id=login_id)
             user.nickname = nickname
+            user.current_potato = current_potato
             user.save()
             return JsonResponse({'status': 'updated'}, status=200)
         except User.DoesNotExist:
             User.objects.create(
                 login_id=login_id,
-                nickname=nickname
+                nickname=nickname,
+                current_potato=current_potato
             )
             return JsonResponse({'status': 'created'}, status=201)
 
@@ -152,4 +155,30 @@ def get_user_items(request):
         except User.DoesNotExist:
             return JsonResponse({'error': 'User not found'}, status=404)
 
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+@csrf_exempt
+def get_user_potato(request):
+    if request.method == 'GET':
+        user_id = request.GET.get('user_id')
+        try:
+            user = User.objects.get(login_id=user_id)
+            return JsonResponse({'current_potato': user.current_potato}, status=200)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found'}, status=404)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+@csrf_exempt
+def update_user_potato(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        user_id = data.get('user_id')
+        potato_count = data.get('potato_count')
+        try:
+            user = User.objects.get(login_id=user_id)
+            user.current_potato = potato_count
+            user.save()
+            return JsonResponse({'status': 'success'}, status=200)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found'}, status=404)
     return JsonResponse({'error': 'Invalid request method'}, status=400)
