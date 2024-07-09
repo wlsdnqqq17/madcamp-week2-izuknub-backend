@@ -3,6 +3,7 @@ from django.db import models
 class User(models.Model):
     login_id = models.CharField(max_length=100, unique=True)
     nickname = models.CharField(max_length=45)
+    current_potato = models.IntegerField(default=0)
 
     def __str__(self):
         return self.nickname
