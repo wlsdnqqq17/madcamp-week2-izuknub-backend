@@ -10,4 +10,5 @@ urlpatterns = [
     re_path(r'^get_friend_requests/(?P<user_id>[^/]+)/$', views.get_friend_requests, name='get_friend_requests'),
     path('accept_friend_request/', views.accept_friend_request, name='accept_friend_request'),
     path('purchase_item/', views.purchase_item, name='purchase_item'),
+    path('user_items/', views.get_user_items, name='get_user_items'),
 ]
