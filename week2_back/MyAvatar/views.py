@@ -13,19 +13,16 @@ def save_kakao_user(request):
         data = json.loads(request.body)
         login_id = data.get('login_id')
         nickname = data.get('nickname')
-        current_potato = data.get('current_potato')
 
         try:
             user = User.objects.get(login_id=login_id)
             user.nickname = nickname
-            user.current_potato = current_potato
             user.save()
             return JsonResponse({'status': 'updated'}, status=200)
         except User.DoesNotExist:
             User.objects.create(
                 login_id=login_id,
                 nickname=nickname,
-                current_potato=current_potato
             )
             return JsonResponse({'status': 'created'}, status=201)
 
@@ -155,77 +152,4 @@ def get_user_items(request):
         except User.DoesNotExist:
             return JsonResponse({'error': 'User not found'}, status=404)
 
-    return JsonResponse({'error': 'Invalid request method'}, status=400)
-
-
-@csrf_exempt
-def get_user_info(request):
-    if request.method == 'GET':
-        user_id = request.GET.get('user_id')
-        try:
-            user = User.objects.get(login_id=user_id)
-            avatar_state = UserAvatarState.objects.get(user=user)
-
-            response_data = {
-                'current_potato': user.current_potato,
-                'avatar_state': {
-                    'hat_item_id': avatar_state.hat_item.id if avatar_state.hat_item else None,
-                    'clothes_item_id': avatar_state.clothes_item.id if avatar_state.clothes_item else None,
-                    'accessory_item_id': avatar_state.accessory_item.id if avatar_state.accessory_item else None,
-                    'background_item_id': avatar_state.background_item.id if avatar_state.background_item else None,
-                }
-            }
-            return JsonResponse(response_data, status=200)
-        except User.DoesNotExist:
-            return JsonResponse({'error': 'User not found'}, status=404)
-        except UserAvatarState.DoesNotExist:
-            return JsonResponse({'error': 'Avatar state not found'}, status=404)
-    return JsonResponse({'error': 'Invalid request method'}, status=400)
-
-@csrf_exempt
-def update_user_potato(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        user_id = data.get('user_id')
-        potato_count = data.get('potato_count')
-        try:
-            user = User.objects.get(login_id=user_id)
-            user.current_potato = potato_count
-            user.save()
-            return JsonResponse({'status': 'success'}, status=200)
-        except User.DoesNotExist:
-            return JsonResponse({'error': 'User not found'}, status=404)
-    return JsonResponse({'error': 'Invalid request method'}, status=400)
-
-@csrf_exempt
-def update_user_avatar_state(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        user_id = data.get('user_id')
-        hat_item_id = data.get('hat_item_id')
-        clothes_item_id = data.get('clothes_item_id')
-        accessory_item_id = data.get('accessory_item_id')
-        background_item_id = data.get('background_item_id')
-
-        try:
-            user = User.objects.get(login_id=user_id)
-            hat_item = Item.objects.get(id=hat_item_id) if hat_item_id else None
-            clothes_item = Item.objects.get(id=clothes_item_id) if clothes_item_id else None
-            accessory_item = Item.objects.get(id=accessory_item_id) if accessory_item_id else None
-            background_item = Item.objects.get(id=background_item_id) if background_item_id else None
-
-            user_avatar_state, created = UserAvatarState.objects.update_or_create(
-                user=user,
-                defaults={
-                    'hat_item': hat_item,
-                    'clothes_item': clothes_item,
-                    'accessory_item': accessory_item,
-                    'background_item': background_item,
-                }
-            )
-            return JsonResponse({'status': 'success', 'created': created}, status=200)
-        except User.DoesNotExist:
-            return JsonResponse({'error': 'User not found'}, status=404)
-        except Item.DoesNotExist:
-            return JsonResponse({'error': 'Item not found'}, status=404)
     return JsonResponse({'error': 'Invalid request method'}, status=400)
