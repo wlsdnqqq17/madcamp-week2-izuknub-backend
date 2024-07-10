@@ -199,16 +199,16 @@ def get_avatar_state(request):
         except User.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'User not found'}, status=404)
 
-        # Try to get the user's avatar state, create it if it doesn't exist
-        avatar_state, created = UserAvatarState.objects.get_or_create(
-            user=user,
-            defaults={
-                'hat_item': None,
-                'clothes_item': None,
-                'accessory_item': None,
-                'background_item': None,
-            }
-        )
+        try:
+            avatar_state = UserAvatarState.objects.get(user=user)
+        except UserAvatarState.DoesNotExist:
+            avatar_state = UserAvatarState.objects.create(
+                user=user,
+                hat_item=None,
+                clothes_item=None,
+                accessory_item=None,
+                background_item=None,
+            )
 
         data = {
             'user_id': user.login_id,
