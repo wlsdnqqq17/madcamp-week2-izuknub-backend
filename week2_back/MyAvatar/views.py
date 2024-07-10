@@ -161,7 +161,6 @@ def update_avatar_state(request):
         data = json.loads(request.body)
         user_id = data.get('user_id')
         item_id = data.get('item_id')
-        category = data.get('category')
 
         try:
             user = User.objects.get(login_id=user_id)
@@ -169,13 +168,13 @@ def update_avatar_state(request):
 
             avatar_state, created = UserAvatarState.objects.get_or_create(user=user)
 
-            if category == 'hat':
+            if item.category == 'hat':
                 avatar_state.hat_item = item
-            elif category == 'clothes':
+            elif item.category == 'clothes':
                 avatar_state.clothes_item = item
-            elif category == 'accessory':
+            elif item.category == 'accessory':
                 avatar_state.accessory_item = item
-            elif category == 'background':
+            elif item.category == 'background':
                 avatar_state.background_item = item
             else:
                 return JsonResponse({'status': 'error', 'message': 'Invalid category.'}, status=400)
