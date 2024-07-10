@@ -221,3 +221,21 @@ def get_avatar_state(request):
         return JsonResponse({'status': 'success', 'avatar_state': data}, status=200)
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)
+
+
+@csrf_exempt
+def get_item_image_url(request):
+    if request.method == 'GET':
+        item_id = request.GET.get('item_id')
+
+        try:
+            item = Item.objects.get(id=item_id)
+            data = {
+                'item_id': item.id,
+                'item_image_url': item.item_image_url
+            }
+            return JsonResponse({'status': 'success', 'data': data}, status=200)
+        except Item.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Item not found'}, status=404)
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)

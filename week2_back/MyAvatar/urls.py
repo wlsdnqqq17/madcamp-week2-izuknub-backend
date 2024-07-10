@@ -13,4 +13,5 @@ urlpatterns = [
     path('user_items/', views.get_user_items, name='get_user_items'),
     path('update_avatar_state/', views.update_avatar_state, name='update_avatar_state'),
     path('get_avatar_state/', views.get_avatar_state, name='get_avatar_state'),
+    path('get_item_image_url/', views.get_item_image_url, name='get_item_image_url'),
 ]
