@@ -153,3 +153,39 @@ def get_user_items(request):
             return JsonResponse({'error': 'User not found'}, status=404)
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+@csrf_exempt
+def update_avatar_state(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        user_id = data.get('user_id')
+        item_id = data.get('item_id')
+        category = data.get('category')
+
+        try:
+            user = User.objects.get(login_id=user_id)
+            item = Item.objects.get(id=item_id)
+
+            avatar_state, created = UserAvatarState.objects.get_or_create(user=user)
+
+            if category == 'hat':
+                avatar_state.hat_item = item
+            elif category == 'clothes':
+                avatar_state.clothes_item = item
+            elif category == 'accessory':
+                avatar_state.accessory_item = item
+            elif category == 'background':
+                avatar_state.background_item = item
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Invalid category.'}, status=400)
+
+            avatar_state.save()
+
+            return JsonResponse({'status': 'success', 'message': 'Avatar state updated successfully.'}, status=200)
+
+        except User.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'User not found.'}, status=404)
+        except Item.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Item not found.'}, status=404)
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=400)
