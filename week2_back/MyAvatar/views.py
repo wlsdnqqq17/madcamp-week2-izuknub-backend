@@ -188,3 +188,36 @@ def update_avatar_state(request):
         except Item.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Item not found.'}, status=404)
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=400)
+
+@csrf_exempt
+def get_avatar_state(request):
+    if request.method == 'GET':
+        user_id = request.GET.get('user_id')
+
+        try:
+            user = User.objects.get(login_id=user_id)
+        except User.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'User not found'}, status=404)
+
+        # Try to get the user's avatar state, create it if it doesn't exist
+        avatar_state, created = UserAvatarState.objects.get_or_create(
+            user=user,
+            defaults={
+                'hat_item': None,
+                'clothes_item': None,
+                'accessory_item': None,
+                'background_item': None,
+            }
+        )
+
+        data = {
+            'user_id': user.login_id,
+            'hat_item_id': avatar_state.hat_item.id if avatar_state.hat_item else None,
+            'clothes_item_id': avatar_state.clothes_item.id if avatar_state.clothes_item else None,
+            'accessory_item_id': avatar_state.accessory_item.id if avatar_state.accessory_item else None,
+            'background_item_id': avatar_state.background_item.id if avatar_state.background_item else None,
+        }
+
+        return JsonResponse({'status': 'success', 'avatar_state': data}, status=200)
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)
